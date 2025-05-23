@@ -12,35 +12,35 @@
   <link href="https://fonts.cdnfonts.com/css/bimbo" rel="stylesheet" />
 
   <!-- CSS externo -->
-  <link rel="stylesheet" href="/style.css" />
+ <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <header>
     <div class="content-fit">
-      <div class="logo"><a href="#banner">FGT</a></div>
+      <div class="logo"><a href="#banner" aria-label="Ir para o topo do site">FGT</a></div>
       <nav aria-label="Menu principal">
         <ul>
           <li><a href="#contact">Contatos</a></li>
           <li><a href="#description">Categoria</a></li>
-          <li><a href="#login">Entrar</a></li>
+          <li><a href="#login" tabindex="-1" aria-disabled="true" style="opacity: 0.5; cursor: default;">Entrar</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="section" id="banner">
+    <section class="section" id="banner" tabindex="0" aria-label="Seção de banner">
       <div class="content-fit">
         <h1 class="title" data-before="ANIMAÇÃO 3D">ANIMAÇÃO 3D</h1>
       </div>
-      <img src="https://assets.codepen.io/453571/flower.png" class="decorate" alt="Flores decorativas" />
-      <img src="https://assets.codepen.io/453571/leaf.png" class="decorate" alt="Folha decorativa" />
+      <img src="https://assets.codepen.io/453571/flower.png" class="decorate flower" alt="Flores decorativas" />
+      <img src="https://assets.codepen.io/453571/leaf.png" class="decorate leaf" alt="Folha decorativa" />
     </section>
 
-    <section class="section" id="intro">
+    <section class="section" id="intro" tabindex="0" aria-label="Seção introdutória">
       <div class="content-fit">
-        <div class="number">01</div>
+        <div class="number" aria-hidden="true">01</div>
         <div class="des">
           <h2 class="title">Design de animação 3D para sites</h2>
           <p>
@@ -56,9 +56,9 @@
       </div>
     </section>
 
-    <section class="section" id="description">
+    <section class="section" id="description" tabindex="0" aria-label="Seção de descrição">
       <div class="content-fit">
-        <div class="number">02</div>
+        <div class="number" aria-hidden="true">02</div>
         <div class="des">
           <h2 class="title">FER FGTE</h2>
           <p>
@@ -72,23 +72,23 @@
           </p>
         </div>
       </div>
-      <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate" alt="Folha decorativa" />
+      <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate leaf1" alt="Folha decorativa" />
     </section>
 
-    <section class="section" id="contact">
+    <section class="section" id="contact" tabindex="0" aria-label="Seção de contato">
       <div class="content-fit">
-        <div class="number">03</div>
+        <div class="number" aria-hidden="true">03</div>
         <div class="des">
           <h2 class="title">CONTATO</h2>
           <table>
             <tbody>
               <tr>
                 <td>Email</td>
-                <td>ftesorie123@gmail.com</td>
+                <td><a href="mailto:ftesorie123@gmail.com" rel="nofollow noopener noreferrer">ftesorie123@gmail.com</a></td>
               </tr>
               <tr>
                 <td>Telefone</td>
-                <td>+55 46 99928-2899</td>
+                <td><a href="tel:+5546999282899">+55 46 99928-2899</a></td>
               </tr>
               <tr>
                 <td>Website</td>
@@ -96,7 +96,7 @@
               </tr>
             </tbody>
           </table>
-          <div class="sign">FT FGT</div>
+          <div class="sign" aria-hidden="true">FT FGT</div>
         </div>
       </div>
     </section>
