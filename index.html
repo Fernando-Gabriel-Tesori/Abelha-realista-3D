@@ -1,86 +1,204 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FGT - Animação 3D para Sites</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="module">import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import { gsap } from "https://cdn.skypack.dev/gsap";
 
-  <!-- Fonts -->
-  <link href="https://fonts.cdnfonts.com/css/devil-breeze" rel="stylesheet" />
-  <link href="https://fonts.cdnfonts.com/css/poppins" rel="stylesheet" />
-  <link href="https://fonts.cdnfonts.com/css/bimbo" rel="stylesheet" />
+const camera = new THREE.PerspectiveCamera(
+  10,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 13;
 
-  <!-- CSS externo -->
- <link rel="stylesheet" href="styles.css" />
+const scene = new THREE.Scene();
+let bee;
+let mixer;
+const loader = new GLTFLoader();
+
+// Fixed GLB URL - using raw.githubusercontent.com which serves with proper CORS headers
+loader.load(
+  "https://raw.githubusercontent.com/DennysDionigi/bee-glb/94253437c023643dd868592e11a0fd2c228cfe07/demon_bee_full_texture.glb",
+  function (gltf) {
+    bee = gltf.scene;
+    scene.add(bee);
+
+    mixer = new THREE.AnimationMixer(bee);
+    mixer.clipAction(gltf.animations[0]).play();
+    modelMove();
+  },
+  function (xhr) {
+    // Progress callback
+    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+  },
+  function (error) {
+    // Error callback
+    console.error("Error loading model:", error);
+  }
+);
+
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById("container3D").appendChild(renderer.domElement);
+
+// light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+scene.add(ambientLight);
+
+const topLight = new THREE.DirectionalLight(0xffffff, 1);
+topLight.position.set(500, 500, 500);
+scene.add(topLight);
+
+const reRender3D = () => {
+  requestAnimationFrame(reRender3D);
+  renderer.render(scene, camera);
+  if (mixer) mixer.update(0.02);
+};
+reRender3D();
+
+let arrPositionModel = [
+  {
+    id: "banner",
+    position: { x: 0, y: -1, z: 0 },
+    rotation: { x: 0, y: 1.5, z: 0 }
+  },
+  {
+    id: "intro",
+    position: { x: 1, y: -1, z: -5 },
+    rotation: { x: 0.5, y: -0.5, z: 0.5 }
+  },
+  {
+    id: "description",
+    position: { x: -1, y: -1, z: -5 },
+    rotation: { x: 0, y: 0.5, z: 0.2 }
+  },
+  {
+    id: "contact",
+    position: { x: 0.45, y: -2, z: -10 },
+    rotation: { x: 0.2, y: -0.5, z: -0.2 }
+  }
+];
+
+const modelMove = () => {
+  const sections = document.querySelectorAll(".section");
+  let currentSection;
+  sections.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= window.innerHeight / 3) {
+      currentSection = section.id;
+    }
+  });
+  let position_active = arrPositionModel.findIndex(
+    (val) => val.id == currentSection
+  );
+  if (position_active >= 0) {
+    let new_coordinates = arrPositionModel[position_active];
+    gsap.to(bee.position, {
+      x: new_coordinates.position.x,
+      y: new_coordinates.position.y,
+      z: new_coordinates.position.z,
+      duration: 3,
+      ease: "power1.out"
+    });
+    gsap.to(bee.rotation, {
+      x: new_coordinates.rotation.x,
+      y: new_coordinates.rotation.y,
+      z: new_coordinates.rotation.z,
+      duration: 3,
+      ease: "power1.out"
+    });
+  }
+};
+
+window.addEventListener("scroll", () => {
+  if (bee) {
+    modelMove();
+  }
+});
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+</script>
+<link rel="stylesheet" href="style.css">
+    <title>🐝ABELHA 3D🐝</title>
 </head>
-
 <body>
-  <header>
-    <div class="content-fit">
-      <div class="logo"><a href="#banner" aria-label="Ir para o topo do site">FGT</a></div>
-      <nav aria-label="Menu principal">
-        <ul>
-          <li><a href="#contact">Contatos</a></li>
-          <li><a href="#description">Categoria</a></li>
-          <li><a href="#login" tabindex="-1" aria-disabled="true" style="opacity: 0.5; cursor: default;">Entrar</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="section" id="banner" tabindex="0" aria-label="Seção de banner">
-      <div class="content-fit">
-        <h1 class="title" data-before="ANIMAÇÃO 3D">ANIMAÇÃO 3D</h1>
+    <header>
+        <div class="content-fit">
+          <div class="logo">FGT</div>
+          <nav>
+            <ul>
+              <li>Contacts</li>
+              <li>Category</li>
+              <li>Login</li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <div class="section" id="banner">
+        <div class="content-fit">
+          <div class="title" data-before="3D ANIMATION">3D ANIMATION</div>
+        </div>
+        <img src="https://assets.codepen.io/453571/flower.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
+        <img src="https://assets.codepen.io/453571/leaf.png" class="decorate" alt="" style="width: 30vw; bottom: 0; left: 0;">
       </div>
-      <img src="https://assets.codepen.io/453571/flower.png" class="decorate flower" alt="Flores decorativas" />
-      <img src="https://assets.codepen.io/453571/leaf.png" class="decorate leaf" alt="Folha decorativa" />
-    </section>
+      <div class="section" id="intro">
+        <div class="content-fit">
+          <div class="number">01</div>
+          <div class="des">
+            <div class="title">Design de animação 3D para site</div>
+            <p>O prazer, por si só, é livre — mas não está isento de julgamento.
+Nem todo deleite merece ser abraçado, pois há prazeres que a razão rejeita, que o dever impede, que a dor denuncia e que o sofrimento revela como enganosos.
 
-    <section class="section" id="intro" tabindex="0" aria-label="Seção introdutória">
-      <div class="content-fit">
-        <div class="number" aria-hidden="true">01</div>
-        <div class="des">
-          <h2 class="title">Design de animação 3D para sites</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus voluptas a porro libero
-            recusandae quae, aut ratione, incidunt laborum, necessitatibus similique enim doloremque ex.
-            Laudantium obcaecati aspernatur doloremque illo beatae, maxime hic itaque consequatur nisi
-            accusantium veritatis, voluptatem ratione! Placeat numquam nisi reiciendis harum quibusdam tempore
-            eaque deleniti accusantium, veniam quae eos sed, asperiores laborum corporis odit mollitia
-            consequatur adipisci? Quibusdam quis eos debitis non esse blanditiis laudantium rerum odit tempora?
-            Corrupti maiores velit consequuntur cupiditate reiciendis similique provident repudiandae.
-          </p>
+Cegos são os que louvam o prazer sem discernimento.
+Ignoram a angústia dos virtuosos e desprezam a nobreza de quem escolhe o caminho mais árduo.
+É justamente aí que a verdadeira grandeza se revela: não no prazer desenfreado, mas na renúncia consciente.
+
+A verdade acusa o prazer quando este se opõe à razão.
+E que jamais ele seja celebrado, senão após o crivo da consciência, rejeitando, um a um, aqueles que corrompem o espírito.
+
+Perdoo os que, vencidos pelos acusadores, encontram paz em meio à confusão. Mas não ignoro que a carne fraca teme o esforço e foge das provações como se fossem feras.
+
+E no final, o que se conquista?
+O que resta àqueles que odeiam os momentos de silêncio, que fogem das verdades incômodas e se embriagam com bajulações vazias?
+
+Os velhos corrompidos — com seus desejos não satisfeitos — buscam triunfar não pela sabedoria, mas pelo capricho.
+Rejeitam o que os desafia e tratam de silenciar tudo o que espelha sua própria fraqueza.</p>
+          </div>
         </div>
       </div>
-    </section>
-
-    <section class="section" id="description" tabindex="0" aria-label="Seção de descrição">
-      <div class="content-fit">
-        <div class="number" aria-hidden="true">02</div>
-        <div class="des">
-          <h2 class="title">FER FGTE</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus voluptas a porro libero
-            recusandae quae, aut ratione, incidunt laborum, necessitatibus similique enim doloremque ex.
-            Laudantium obcaecati aspernatur doloremque illo beatae, maxime hic itaque consequatur nisi
-            accusantium veritatis, voluptatem ratione! Placeat numquam nisi reiciendis harum quibusdam tempore
-            eaque deleniti accusantium, veniam quae eos sed, asperiores laborum corporis odit mollitia
-            consequatur adipisci? Quibusdam quis eos debitis non esse blanditiis laudantium rerum odit tempora?
-            Corrupti maiores velit consequuntur cupiditate reiciendis similique provident repudiandae.
-          </p>
+      <div class="section" id="description">
+        <div class="content-fit">
+          <div class="number">02</div>
+          <div class="des">
+            <div class="title">FER FGT</div>
+            <p> busca pelo prazer não está isenta de limites; ela deve ser moderada pela razão, pelas obrigações, pelas dores e pelas provações inevitáveis da vida.
+Aqueles que, cegamente, exaltam o prazer ignoram o sofrimento dos virtuosos e, por isso, caem em erro.
+É exatamente nesse ponto que a sabedoria se impõe: nem todo prazer deve ser aceito, principalmente quando sua aceitação fere a razão.
+O verdadeiro contentamento não reside na entrega indiscriminada, mas na escolha criteriosa, na renúncia consciente de certos deleites.
+Àqueles que sucumbem às tentações e aos acusadores que distorcem a verdade, concedo meu perdão — pois são frágeis na carne e frágeis no espírito.
+Mas é essa mesma fragilidade que os impede de suportar os trabalhos mais árduos.
+Qual é o real benefício em buscar constantemente o prazer?
+Não seriam essas bajulações momentâneas uma distração que desvia o ser de sua essência mais elevada?
+Os que se deixam corromper pelos desejos, ainda que idosos e experientes, perdem-se ao rejeitar a disciplina e ao recusar tudo o que exige esforço.</p>
+          </div>
         </div>
+        <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate" alt="" style="width: 70vw; bottom: 0; right: 0;">
       </div>
-      <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate leaf1" alt="Folha decorativa" />
-    </section>
-
-    <section class="section" id="contact" tabindex="0" aria-label="Seção de contato">
-      <div class="content-fit">
-        <div class="number" aria-hidden="true">03</div>
-        <div class="des">
-          <h2 class="title">CONTATO</h2>
-          <table>
+      <div class="section" id="contact">
+        <div class="content-fit">
+          <div class="number">03</div>
+          <div class="des">
+            <div class="title">CONTACT</div>
+            <table>
             <tbody>
               <tr>
                 <td>Email</td>
@@ -92,18 +210,14 @@
               </tr>
               <tr>
                 <td>Website</td>
-                <td><a href="https://seusite.com" target="_blank" rel="noopener noreferrer">seusite.com</a></td>
+                <td><a href="https://github.com/Fernando-Gabriel-Tesori/Fernando-Gabriel-Tesori" target="_blank" rel="noopener noreferrer">seusite.com</a></td>
               </tr>
             </tbody>
           </table>
-          <div class="sign" aria-hidden="true">FT FGT</div>
+            <div class="sign">FGT</div>
+          </div>
         </div>
       </div>
-    </section>
-  </main>
-
-  <!-- JS externo -->
-  <script src="script.js"></script>
+      <div id="container3D"></div>
 </body>
-
 </html>
